@@ -8,7 +8,7 @@ using namespace std;
 //输出:输出一行，依次输出a,e,i,o,u在输入字符串中出现的次数，整数之间用空格分隔。
 
 int main() {
-    char s[80]; s[0] = '\0';
+    char s[80] = "\0";
     int count[5] = {0};
     cin.getline(s,80);
     for (int i = 0; i < 80; i++){
