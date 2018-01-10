@@ -25,6 +25,7 @@ int main() {
     for(int i = 0;i < n;i++){
         cin >> word[i];
     }
+    //懒得思考，就用枚举解决了
     cout << word[0];
     count += strlen(word[0]);
     for(int i = 1;i < n;i++){
