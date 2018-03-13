@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-//PAT Advanced No.1012 “数字分类”
+//PAT Basic No.1012 “数字分类”
 vector<int> A2E, A4E;
 int A1 = 0,A2 = 0,A3 = 0,A5 = 0;
 float A4 = 0;
