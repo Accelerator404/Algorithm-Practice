@@ -5,7 +5,7 @@
 
 using namespace std;
 
-//PAT Advanced No.1005 “继续(3n+1)猜想”
+//PAT Basic No.1005 “继续(3n+1)猜想”
 
 int Callatz(int k){
     if(k % 2 == 0)
