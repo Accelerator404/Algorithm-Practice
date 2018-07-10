@@ -1,86 +1,56 @@
 #include <iostream>
-#include <vector>
-#include <map>
 #include <algorithm>
 using namespace std;
 
 //PAT Advanced 1012 The Best Rank
 
-struct Student{
-    string ID;
-    int C,M,E,A;
-};
+struct Student {
+    int id, best;
+    int score[4], rank[4];
+}studentData[2005];
 
-bool compareC(Student A,Student B){
-    return A.C > B.C;
+int exist[1000000], flag = -1;
+
+bool compare(Student a, Student b) {
+    return a.score[flag] > b.score[flag];
 }
 
-bool compareM(Student A,Student B){
-    return A.M > B.M;
-}
-
-bool compareE(Student A,Student B){
-    return A.E > B.E;
-}
-
-bool compareA(Student A,Student B){
-    return A.A > B.A;
-}
-
-int main(){
-    unsigned int N,M;
-    vector<Student> studentData;
-    map<string,int> rankC,rankM,rankE,rankA;
-    cin >> N >> M;
-    studentData.resize(N);
-    for (int i = 0; i < N; ++i) {
-        cin >> studentData[i].ID >> studentData[i].C >> studentData[i].M >> studentData[i].E;
-        studentData[i].A = (studentData[i].C + studentData[i].M + studentData[i].E + 0.5)/3;
+int main() {
+    int n, m, id;
+    scanf("%d %d", &n, &m);
+    for(int i = 0; i < n; i++) {
+        scanf("%d %d %d %d", &studentData[i].id, &studentData[i].score[1], &studentData[i].score[2], &studentData[i].score[3]);
+        studentData[i].score[0] = (studentData[i].score[1] + studentData[i].score[2] + studentData[i].score[3]) / 3.0 + 0.5;
     }
-    sort(studentData.begin(),studentData.end(),compareC);
-    for (int j = 0; j < N; ++j){
-        rankC[studentData[j].ID] = j+1;
-        if(j > 0 && studentData[j].C == studentData[j-1].C)
-            rankC[studentData[j].ID] = rankC[studentData[j-1].ID];
-    }
-    sort(studentData.begin(),studentData.end(),compareM);
-    for (int j = 0; j < N; ++j){
-        rankM[studentData[j].ID] = j+1;
-        if(j > 0 && studentData[j].C == studentData[j-1].C)
-            rankM[studentData[j].ID] = rankM[studentData[j-1].ID];
-    }
-    sort(studentData.begin(),studentData.end(),compareE);
-    for (int j = 0; j < N; ++j){
-        rankE[studentData[j].ID] = j+1;
-        if(j > 0 && studentData[j].C == studentData[j-1].C)
-            rankE[studentData[j].ID] = rankE[studentData[j-1].ID];
-    }
-    sort(studentData.begin(),studentData.end(),compareA);
-    for (int j = 0; j < N; ++j){
-        rankA[studentData[j].ID] = j+1;
-        if(j > 0 && studentData[j].C == studentData[j-1].C)
-            rankA[studentData[j].ID] = rankA[studentData[j-1].ID];
-    }
-    for (int k = 0; k < M; ++k) {
-        string studentToCheck;
-        cin >> studentToCheck;
-        if(rankA.find(studentToCheck) == rankA.end()){
-            cout << "N/A" << endl;
-            continue;
+    for(flag = 0; flag <= 3; flag++) {
+        sort(studentData, studentData + n, compare);
+        studentData[0].rank[flag] = 1;
+        for(int i = 1; i < n; i++) {
+            studentData[i].rank[flag] = i + 1;
+            if(studentData[i].score[flag] == studentData[i-1].score[flag])
+                studentData[i].rank[flag] = studentData[i-1].rank[flag];
         }
-        else{
-            int rC,rM,rE,rA;
-            rC = rankC[studentToCheck],rM = rankM[studentToCheck];
-            rE = rankE[studentToCheck],rA = rankA[studentToCheck];
-            if(rA <= rC && rA <= rM && rA <= rE){
-                cout << rA << " A" << endl;
-            } else if (rC < rA && rC <= rE && rC <= rM) {
-                cout << rC << " C" << endl;
-            } else if (rM < rA && rM < rC && rM <= rE){
-                cout << rM << " M" << endl;
-            } else if (rE < rA && rE < rC && rE < rM){
-                cout << rE << " E" << endl;
+    }
+    for(int i = 0; i < n; i++) {
+        exist[studentData[i].id] = i + 1;
+        studentData[i].best = 0;
+        int minn = studentData[i].rank[0];
+        for(int j = 1; j <= 3; j++) {
+            if(studentData[i].rank[j] < minn) {
+                minn = studentData[i].rank[j];
+                studentData[i].best = j;
             }
+        }
+    }
+    char c[5] = {'A', 'C', 'M', 'E'};
+    for(int i = 0; i < m; i++) {
+        scanf("%d", &id);
+        int temp = exist[id];
+        if(temp) {
+            int best = studentData[temp-1].best;
+            printf("%d %c\n", studentData[temp-1].rank[best], c[best]);
+        } else {
+            printf("N/A\n");
         }
     }
     return 0;
