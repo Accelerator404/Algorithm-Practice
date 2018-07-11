@@ -20,7 +20,7 @@ void DFS(int node){
         return;
     visited[node] = true;
     for (int i = 1; i <= N; ++i) {
-        if(map[node][i] == 1){
+        if(map[node][i] == 1 && !visited[i]){
             DFS(i);
         }
     }
@@ -31,12 +31,12 @@ int main() {
     cin >> N >> M >> K;
     for (int i = 0; i < M; ++i) {
         int cityA,cityB;
-        cin >> cityA >> cityB;
+        scanf("%d %d",&cityA,&cityB);
         map[cityA][cityB] = map[cityB][cityA] = 1;
     }
     for (int j = 0; j < K; ++j) {
         int occupiedCity,zone = 0;
-        cin >> occupiedCity;
+        scanf("%d",&occupiedCity);
         fill(visited,visited+1001,false);
         visited[occupiedCity] = true;
         for (int i = 1; i <= N; ++i) {
@@ -45,7 +45,7 @@ int main() {
                 zone++;
             }
         }
-        cout << zone-1 << endl;
+        printf("%d\n",zone-1);
     }
     return 0;
 }
