@@ -11,8 +11,8 @@ long int to_decimal(long int num,int radix){
     string temp = to_string(num);
     unsigned long int peak = temp.length();
     long int res = 0;
+    unsigned long int exp = peak - 1;
     for (int i = 0; i < peak; ++i) {
-        unsigned long int exp = peak - 1;
         res += (temp[i] - '0') * pow(radix,exp);
         exp--;
     }
@@ -20,30 +20,42 @@ long int to_decimal(long int num,int radix){
 }
 
 long int to_otherRadix(long int num,int radix){
+    if(radix == 10)
+        return num;
     string temp;
-    long int pRes = 1,pLef;
-    while (pRes > 0){
+    long int pLef;
+    while (num > 0){
         pLef = num % radix;
-        pRes = num / radix;
+        num = num / radix;
         temp += to_string(pLef);
     }
     reverse(temp.begin(),temp.end());
     return strtol(temp.c_str(), nullptr,10);
 }
 
+const int PrimeShortList[20] = {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71};
+
 bool isPrime(long int num){
     if(num == 2)
         return true;
-    else if(num == 0 || num == 1)
+    else if(num == 1)
         return false;
     if(num % 2 !=0){
         long int range = sqrt(num) + 2;
-        for (int i = 3; i <= range ; ) {
-            if(num % i == 0)
-                return false;
-            i += 2;
+        for (int i = 0; i < 20; ++i) {
+            if(num == PrimeShortList[i])
+                return true;
         }
-        return true;
+        if(num <= PrimeShortList[19])
+            return false;
+        else{
+            for (int i = 3; i <= range ; ) {
+                if(num % i == 0)
+                    return false;
+                i += 2;
+            }
+            return true;
+        }
     }
     else{
         return false;
@@ -53,10 +65,10 @@ bool isPrime(long int num){
 int main() {
     long int N;
     while (cin >> N){
-        int D;
-        cin >> D;
         if(N < 0)
             break;
+        int D;
+        cin >> D;
         if(!isPrime(N)) {
             cout << "No" << endl;
             continue;
