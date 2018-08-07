@@ -44,14 +44,18 @@ int main() {
                 //判断队列前方办理完成时间是否超出17:00
                 if(window[j].qEndTime >= (17-8) * 60)
                     sorry[index] = true;
+                //更新队列末尾完成业务时间，即该顾客完成业务时间
                 window[j].qEndTime += time[index];
                 endTime[index] = window[j].qEndTime;
-                window[j].qPopTime = window[j].q.front();
+                //更新队列头部完成时间
+                if(i == 1)
+                    window[j].qPopTime = window[j].q.front();
                 index++;
             }
         }
     }
     while(index <= K) {
+        //窗口1~N顺序找出qPopTime最小的窗口队列并弹出完成业务顾客,之后与填充初始队列的方法相同
         int tempMinute = window[1].qPopTime, tempWindow = 1;
         for(int i = 2; i <= N; i++) {
             if(window[i].qPopTime < tempMinute) {
@@ -62,18 +66,18 @@ int main() {
         window[tempWindow].q.pop();
         window[tempWindow].q.push(time[index]);
         window[tempWindow].qPopTime +=  window[tempWindow].q.front();
-        if(window[tempWindow].qEndTime >= 540)
+        if(window[tempWindow].qEndTime >= (17-8) * 60)
             sorry[index] = true;
         window[tempWindow].qEndTime += time[index];
         endTime[index] = window[tempWindow].qEndTime;
         index++;
     }
     for(int i = 1; i <= Q; i++) {
-        int query, minute;
-        scanf("%d", &query);
-        minute = endTime[query];
-        if(sorry[query] == true) {
-            printf("Sorry\n");
+        int customer, minute;
+        cin >> customer;
+        minute = endTime[customer];
+        if(sorry[customer] == true) {
+            cout << "Sorry" << endl;
         } else {
             cout<< time_to_HHMM(minute + 8 * 60) << endl;
         }
