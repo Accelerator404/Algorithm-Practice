@@ -41,7 +41,7 @@ bool isPrime(long int num){
     else if(num == 1)
         return false;
     if(num % 2 !=0){
-        long int range = sqrt(num) + 2;
+        long int range = sqrt(num + 1.0);
         for (int i = 0; i < 20; ++i) {
             if(num == PrimeShortList[i])
                 return true;
