@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+//PAT Advanced 1017 Queueing at Bank
+
+/*
+ * 这个就是队列的问题，可以认为所有顾客进入银行的时候立刻取号，这就与直接窗口前排队的1014题不同。
+ */
+
+struct node{
+    int hour,minute,second,arriveBySec;
+    int P;
+};
+
+bool compare(node A,node B){
+    if(A.hour != B.hour)
+        return A.hour<B.hour;
+    else if(A.minute != B.minute)
+        return A.minute < B.minute;
+    else
+        return A.second < B.second;
+}
+
+int main() {
+    int N,K;
+    cin >> N >> K;
+    vector<node> data;
+    for (int i = 0; i < N; ++i) {
+        node tmp;
+        scanf("%d:%d:%d %d",&tmp.hour,&tmp.minute,&tmp.second,&tmp.P);
+        tmp.arriveBySec = tmp.hour*60*60+tmp.minute*60+tmp.second;
+        tmp.P *= 60;
+        if(tmp.arriveBySec <= 17*60*60)
+            data.push_back(tmp);
+    }
+    sort(data.begin(),data.end(),compare);
+    if(data.size() == 0){
+        cout << "0.0" << endl;
+        return 0;
+    }
+    double average = 0.0;
+    vector<int> window(K, 28800);
+    for(int i = 0; i < data.size(); i++) {
+        int tempindex = 0, minfinish = window[0];
+        for(int j = 1; j < K; j++) {
+            if(minfinish > window[j]) {
+                minfinish = window[j];
+                tempindex = j;
+            }
+        }
+        if(window[tempindex] <= data[i].arriveBySec) {
+            window[tempindex] = data[i].arriveBySec + data[i].P;
+        } else {
+            average += (window[tempindex] - data[i].arriveBySec);
+            window[tempindex] += data[i].P;
+        }
+    }
+    printf("%.1f",average/60.0/data.size());
+    return 0;
+}
