@@ -6,7 +6,8 @@ using namespace std;
 //PAT Advanced 1017 Queueing at Bank
 
 /*
- * 这个就是队列的问题，可以认为所有顾客进入银行的时候立刻取号，这就与直接窗口前排队的1014题不同。
+ * 这个就是队列的问题，可以认为所有顾客进入银行的时候立刻取号，这点与直接窗口前排队的1014题不同。
+ * 但是不用queue也可以做。
  */
 
 struct node{
@@ -43,18 +44,22 @@ int main() {
     double average = 0.0;
     vector<int> window(K, 28800);
     for(int i = 0; i < data.size(); i++) {
-        int tempindex = 0, minfinish = window[0];
+        //找到最早空出的窗口
+        int windowPtr = 0, minFinishTime = window[0];
         for(int j = 1; j < K; j++) {
-            if(minfinish > window[j]) {
-                minfinish = window[j];
-                tempindex = j;
+            if(minFinishTime > window[j]) {
+                minFinishTime = window[j];
+                windowPtr = j;
             }
         }
-        if(window[tempindex] <= data[i].arriveBySec) {
-            window[tempindex] = data[i].arriveBySec + data[i].P;
-        } else {
-            average += (window[tempindex] - data[i].arriveBySec);
-            window[tempindex] += data[i].P;
+        //不需要排队的顾客
+        if(window[windowPtr] <= data[i].arriveBySec) {
+            window[windowPtr] = data[i].arriveBySec + data[i].P;
+        } 
+        //需要排队的顾客
+        else {
+            average += (window[windowPtr] - data[i].arriveBySec);
+            window[windowPtr] += data[i].P;
         }
     }
     printf("%.1f",average/60.0/data.size());
