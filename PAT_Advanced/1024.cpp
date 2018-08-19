@@ -4,34 +4,50 @@ using namespace std;
 
 //PAT Advanced 1024 Palindromic Number
 
-bool check(long long int num){
-    string str = to_string(num);
-    for (int i = 0; i < (str.length()+1)/2; ++i) {
-        if(str[i] != str[str.length()-1-i]){
-            return false;
-        }
-    }
-    return true;
+/*
+ * 有两个测试点需要用到大整数相加
+ */
+
+string reverseBigInt(string N){
+    reverse(N.begin(),N.end());
+    return N;
 }
 
-long long int reverseInt(long long int N){
-    string u = to_string(N);
-    reverse(u.begin(),u.end());
-    long long int rev = strtol(u.c_str(), nullptr,10);
-    return rev;
+bool check(string & str){
+    if(str == reverseBigInt(str))
+        return true;
+    else
+        return false;
+}
+
+string getReverseSum(string s1){
+    string s2 = reverseBigInt(s1);
+    //因为是两个相反数相加，从左往右计算进位是可行的
+    int len = s1.length(), carry = 0;
+    for(int i = 0; i < len; i++) {
+        s1[i] = s1[i] + s2[i] + carry - '0';
+        carry = 0;
+        if(s1[i] > '9') {
+            s1[i] = s1[i] - 10;
+            carry = 1;
+        }
+    }
+    if(carry) s1 += '1';
+    reverse(s1.begin(), s1.end());
+    return s1;
 }
 
 int main(){
-    long long int N,K,count = 0;
+    string N; int K,count = 0;
     cin >> N >> K;
     while (count<K){
         if(check(N)){
-            printf("%lld\n%lld\n",N,count);
+            printf("%s\n%d\n",N.c_str(),count);
             return 0;
         }
-        N += reverseInt(N);
+        N = getReverseSum(N);
         count++;
     }
-    printf("%lld\n%lld\n",N,count);
+    printf("%s\n%d\n",N.c_str(),count);
     return 0;
 }
