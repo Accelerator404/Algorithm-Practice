@@ -7,7 +7,7 @@ using namespace std;
 //PAT Advanced 1025 PAT Ranking
 
 struct unit{
-    string ID;
+    long long int ID;//用string也可，个人将string改为long long int后耗时减半
     int score,location,localRank,finalRank;
 };
 
@@ -22,7 +22,7 @@ int main(){
     vector<unit> database,db;
     int N;
     cin >> N;
-    unit dumb;dumb.ID="dumb";dumb.score=9999;
+    unit dumb;dumb.score=9999;
     database.push_back(dumb);
     for (int i = 1; i <= N; ++i) {
         int K;
@@ -32,7 +32,7 @@ int main(){
         db[0] = dumb;
         for (int j = 1; j <= K; ++j) {
             unit tmp;
-            cin >> tmp.ID >>tmp.score;
+            scanf("%lld%d",&tmp.ID,&tmp.score);
             tmp.location = i;
             db[j] = tmp;
         }
@@ -56,8 +56,8 @@ int main(){
             database[j].finalRank = j;
         else
             database[j].finalRank = database[j-1].finalRank;
-        printf("%s %d %d %d\n",database[j].ID.c_str(),database[j].finalRank,database[j].location,database[j].localRank);
+        //注意13位ID输出格式，部分ID输入数据时前方带0，int格式存储ID则输出时前方补零至宽度=13。
+        printf("%013lld %d %d %d\n",database[j].ID,database[j].finalRank,database[j].location,database[j].localRank);
     }
-
     return 0;
 }
