@@ -7,6 +7,8 @@ using namespace std;
 //PAT Advanced 1023 Have Fun with Numbers
 
 //作为BigInt类的练习，参见紫皮书5.3（p124）
+
+//BigInt Class Begin
 struct BigInt{
     static const int BASE = 100000000;
     static const int WIDTH = 8;
@@ -79,6 +81,8 @@ istream& operator >> (istream& in,BigInt& x){
     x = s;
     return in;
 }
+
+//BigInt Class End
 
 int main(){
     vector<int> book1(10,0),book2(10,0);
