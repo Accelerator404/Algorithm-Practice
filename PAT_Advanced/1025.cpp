@@ -12,7 +12,10 @@ struct unit{
 };
 
 bool compare(unit a,unit b){
-    return a.score > b.score;
+    if(a.score != b.score)
+        return a.score > b.score;
+    else
+        return a.ID < b.ID; //学号排序
 }
 
 int main(){
