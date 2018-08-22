@@ -6,6 +6,10 @@ using namespace std;
 
 //PAT Advanced 1105 Spiral Matrix
 
+/* 补充：填充矩阵时若循环缺少对输入序列的限制条件“t < N”则会在部分测试点溢出
+ *
+ */
+
 int findN(int N){
     int i = sqrt((double)N);
     while(i >= 1) {
