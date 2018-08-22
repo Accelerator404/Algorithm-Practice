@@ -34,15 +34,15 @@ int main(){
             matrix[i][j] = seq[t];
             t++;
         }
-        for (int j = i + 1; j <= m - 1 - i ; ++j) {
+        for (int j = i + 1; j <= m - 1 - i && t < N; ++j) {
             matrix[j][n - 1 - i] = seq[t];
             t++;
         }
-        for (int j = n - 2 - i; j >= i; --j) {
+        for (int j = n - 2 - i; j >= i && t < N; --j) {
             matrix[m - 1 -i][j] = seq[t];
             t++;
         }
-        for (int j = m - 2 -i; j > i; --j) {
+        for (int j = m - 2 -i; j > i && t < N; --j) {
             matrix[j][i] = seq[t];
             t++;
         }
@@ -56,7 +56,6 @@ int main(){
             }
             else
                 printf(" %d",matrix[i][j]);
-
         }
         printf("\n");
     }
