@@ -1,5 +1,4 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
 #include <cmath>
 using namespace std;
@@ -16,24 +15,23 @@ struct node{
     vector<int> subID;
 };
 
+int minDepth = 99999999;
+
 void traversal(int ID,vector<node> & chainList){
     if(chainList[ID].character != 0){
         for (int i = 0; i < chainList[ID].subID.size(); ++i) {
             chainList[chainList[ID].subID[i]].depth = chainList[ID].depth + 1;
             traversal(chainList[ID].subID[i],chainList);
         }
-    } else
-        return;
-}
-
-bool compare(node retailerA,node retailerB){
-    return retailerA.depth < retailerB.depth;
+    }
+    else if(chainList[ID].depth < minDepth)
+        minDepth = chainList[ID].depth;
 }
 
 int main(){
     int N;
     double P,r;
-    vector<node> chainList,retailerList;
+    vector<node> chainList;
     vector<int> retailerIDList;
     cin >> N >> P >> r;
     chainList.resize(N);
@@ -43,28 +41,22 @@ int main(){
         if(Ki == 0){
             chainList[i].character = 0;
             retailerIDList.push_back(i);
-            continue;
         }
         else{
             chainList[i].subID.resize(Ki);
             for (int j = 0; j < Ki; ++j) {
                 scanf("%d",&chainList[i].subID[j]);
             }
+            chainList[i].character = (i == 0)?-1:1;
         }
-        chainList[i].character = (i == 0)?-1:1;
     }
     chainList[0].depth = 0;
     traversal(0,chainList);
-    for (int i = 0; i < retailerIDList.size(); ++i)
-        retailerList.push_back(chainList[retailerIDList[i]]);
-    sort(retailerList.begin(),retailerList.end(),compare);
-    double minPrice = P * pow(1 + r/100.0,retailerList[0].depth);
     int count = 0;
-    for (int i = 0; i < retailerList.size(); ++i) {
-        if(retailerList[i].depth == retailerList[0].depth){
+    for (int i = 0; i < retailerIDList.size(); ++i)
+        if(chainList[retailerIDList[i]].depth == minDepth)
             count++;
-        } else break;
-    }
+    double minPrice = P * pow(1 + r/100.0,minDepth);
     printf("%.04f %d\n",minPrice,count);
     return 0;
 }
