@@ -36,6 +36,8 @@ long int to_otherRadix(long int num,int radix){
 bool isPrime(long int num){
     if(num <= 1)
         return false;
+    if(num > 2 && num%2 == 0)
+        return false;
     long int range = sqrt(num + 1.0);
     for (int i = 3; i <= range; ++i) {
         if(num % i == 0)
