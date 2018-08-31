@@ -6,7 +6,7 @@ using namespace std;
 
 //PAT Advanced 1023 Have Fun with Numbers
 
-//作为BigInt类的练习，参见紫皮书5.3（p124）
+//作为BigInt类的练习，参见紫皮书5.3（p124），限制非负大整数
 
 //BigInt Class Begin
 struct BigInt{
