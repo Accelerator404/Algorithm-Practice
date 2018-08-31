@@ -24,7 +24,10 @@ int main(){
     int N,K;
     cin >> N >> K;
     vector<node> personList(N);
-    std::ios::sync_with_stdio(false);//慎用该命令，使用后不能混用scanf和cin
+    //慎用该命令，使用后不能混用scanf和cin
+    std::ios::sync_with_stdio(false);
+    //如果使用char存储name，因为name是指针所以scanf后就不需要加&，即
+    // char name[9]; scanf("%s%d",name,&age);
     for (int i = 0; i < N; ++i) {
         cin >> personList[i].name >> personList[i].age >> personList[i].worth;
     }
