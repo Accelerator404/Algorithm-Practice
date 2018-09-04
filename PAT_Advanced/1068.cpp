@@ -7,6 +7,7 @@ using namespace std;
 
 int main() {
     int n, m;
+    //数组开大一点避免爆栈
     vector<vector<int>> dp(10010,vector<int>(105));
     vector<int> coins(10010);
     bool choice[10010][105];
