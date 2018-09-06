@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -9,6 +10,21 @@ struct result{
     int startPos,endPos,totalValue;
 };
 
+int N,M;
+
+void Search(int i,int &j,int &tempVal,const vector<int>& chainSum){
+    int left = i,right = N;
+    while (left < right){
+        int mid = (left + right)/2;
+        if(chainSum[mid] - chainSum[i-1] >= M)
+            right = mid;
+        else
+            left = mid+1;
+    }
+    j = right;
+    tempVal = chainSum[j] - chainSum[i-1];
+}
+
 bool compare(result A,result B){
     if(A.totalValue != B.totalValue)
         return A.totalValue < B.totalValue;
@@ -17,7 +33,6 @@ bool compare(result A,result B){
 }
 
 int main() {
-    int N,M;
     cin >> N >> M;
     vector<int> chainSum(N+1);
     vector<result> res;
@@ -25,23 +40,22 @@ int main() {
         scanf("%d",&chainSum[i]);
         chainSum[i] += chainSum[i-1];
     }
-    int minVal = 99999999;
+    int minVal = chainSum[N];
     for(int i = 1;i <= N;i++){
-        int value = 0;
-        for(int j = i;j <= N;j++){
-            value = chainSum[j] - chainSum[i-1];
-            if(value >= M && value <= minVal){
-                result t;
-                t.startPos = i;
-                t.endPos = j;
-                t.totalValue = value;
-                res.push_back(t);
+        int value = 0, j;
+        Search(i,j,value,chainSum);
+        if(value > minVal)
+            continue;
+        if(value >= M){
+            if(value < minVal){
+                res.clear();
                 minVal = value;
-                break;
             }
-            else if(value > M && value > minVal){
-                break;
-            }
+            result t;
+            t.startPos = i;
+            t.endPos = j;
+            t.totalValue = value;
+            res.push_back(t);
         }
     }
     sort(res.begin(),res.end(),compare);
