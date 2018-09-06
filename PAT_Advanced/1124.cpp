@@ -16,10 +16,8 @@ int main() {
         if(find(winner.begin(),winner.end(),follower[S+i*N]) == winner.end())
             winner.push_back(follower[S+i*N]);
         else{
-            int ptr = S+i*N;
-            while (find(winner.begin(),winner.end(),follower[ptr]) != winner.end())
-                ptr++;
-            winner.push_back(follower[ptr]);
+            S++;
+            --i;
         }
     }
     if(winner.empty())
