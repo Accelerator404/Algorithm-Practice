@@ -6,39 +6,27 @@ using namespace std;
 
 //PAT Advanced Level 1085 Perfect Sequence
 
-int Search(int leftB,int N,int limit,vector<int> & mainSeq){
-    if(limit >= mainSeq[N-1])
-        return N-1;
-    int lb = leftB,rb = N;
-    while(lb < rb) {
-        int mid = (lb + rb) / 2;
-        if(mainSeq[mid] <= limit){
-            lb = mid;
-        } else
-            rb = mid - 1;
-    }
-    return lb;
-}
+/*
+ * 使用遍历查找即可，没有使用二分查找的必要。
+ */
 
 int main() {
-    int N,p;
+    long long int N,p;
     cin >> N >> p;
     vector<int> mainSeq(N);
     for (int i = 0; i < N; ++i) {
         scanf("%d",&mainSeq[i]);
     }
     sort(mainSeq.begin(),mainSeq.end(),less<int>());
-    int maxCounts = 0,leftB = 0,rightB;
-    while(true){
-        int limit = mainSeq[leftB] * p;
-        rightB = Search(leftB,N,limit,mainSeq);
-        int tempCount = rightB - leftB + 1;
-        if(tempCount > maxCounts){
-            maxCounts = tempCount;
-        }
-        leftB++;
-        if(leftB >= N-1 || (N - leftB) < maxCounts || limit > mainSeq[N-1]){
-            break;
+    int maxCounts = 0,tempCount = 0;
+    for (int i = 0; i < N; ++i) {
+        for (int j = i+maxCounts; j < N; ++j) {
+            if(mainSeq[j] <= mainSeq[i] * p){
+                tempCount = j-i+1;
+                if(tempCount > maxCounts)
+                    maxCounts = tempCount;
+            } else
+                break;
         }
     }
     cout << maxCounts;
