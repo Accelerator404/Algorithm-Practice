@@ -6,6 +6,7 @@ using namespace std;
 
 //PAT Advanced Level 1038 Recover the Smallest Number
 
+//在sort的过程后，排在最前面的肯定是最小的数，如果按照ab<ba排序，最前面就是两两组合最小的结果
 bool compare(string a, string b){
     return a+b < b+a;
 }
