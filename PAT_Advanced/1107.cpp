@@ -6,55 +6,60 @@ using namespace std;
 
 //PAT Advanced Level 1107 Social Clusters
 
+bool isPositive(int a){
+    return a>0;
+}
+
+int findFather(int x,vector<int> & father){
+    int a = x;
+    //找到根节点
+    while(x != father[x])
+        x = father[x];
+    //将多层树中这一条枝干节点归并到根节点上
+    while(a != father[a]) {
+        int z = a;
+        a = father[a];
+        father[z] = x;
+    }
+    return x;
+}
+
 int main() {
     int N;
     cin >> N;
     vector<int> father(N+1);
-    set<int> hobby[1002];
+    vector<int> root(N+1,0);
+    //储存每门课的根结点
+    int course[1001] = {0};
     father[0] = -1;
     for (int i = 1; i <= N; ++i) {
-        father[i] = i;
+        father[i] = i;}
+    for (int i = 1; i <= N; ++i) {
         int k;
-        scanf("%d",&k);
-        getchar();
+        scanf("%d:",&k);
         for (int j = 0; j < k; ++j) {
             int h;
             scanf("%d",&h);
-            hobby[h].insert(i);
+            if(course[h] == 0)
+                course[h] = i;
+            //归并，归并过程中课程根节点与该阶段的父子关系都被整理压缩
+            int iFather = findFather(i,father);
+            int courseRootFather = findFather(course[h],father);
+            if(iFather != courseRootFather)
+                father[iFather] = courseRootFather;
         }
     }
-    //归并
-    for (int i = 1; i < 1001; ++i) {
-        if(hobby[i].size() > 1){
-            int fatherRoot = father[*hobby[i].begin()];
-            for (auto it = hobby[i].begin(); it != hobby[i].end(); ++it) {
-                father[*it] = fatherRoot;
-            }
-        }
-    }
-    //找出集合根节点
-    set<int> roots;
+    //记录每一组cluster的人数
     for (int i = 1; i <= N; ++i) {
-        if(father[i] == i)
-            roots.insert(i);
+        root[findFather(i,father)]++;
     }
-    //整理归并集父节点
-    for (int i = 1; i <= N; ++i) {
-        while(roots.find(father[i]) == roots.end()){
-            father[i] = father[father[i]];
-        }
-    }
-    vector<int> SIZE;
-    for (auto it = roots.begin(); it != roots.end(); ++it) {
-        long int s = count(father.begin(),father.end(),*it);
-        SIZE.push_back(s);
-    }
-    sort(SIZE.begin(),SIZE.end(),greater<int>());
-    cout << roots.size() << endl;
-    for (int i = 0; i < SIZE.size(); ++i) {
+    sort(root.begin(),root.end(),greater<int>());
+    //不用count_if也可以for循环统计一次非零数
+    cout << count_if(root.begin(),root.end(),isPositive) << endl;
+    for (int i = 0; i < root.size() && root[i] > 0; ++i) {
         if(i != 0)
             printf(" ");
-        printf("%d",SIZE[i]);
+        printf("%d",root[i]);
     }
     return 0;
 }
