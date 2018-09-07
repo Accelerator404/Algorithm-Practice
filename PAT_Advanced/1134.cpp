@@ -8,37 +8,34 @@ using namespace std;
 
 int main() {
     int N,M;
-    set<int> vertices[10001],edge;
     cin >> N >> M;
+    vector<int> vertices[N+1];
     for (int i = 0; i < M; ++i) {
         int v1,v2;
         scanf("%d%d",&v1,&v2);
-        vertices[v1].insert(i);
-        vertices[v2].insert(i);
+        vertices[v1].push_back(i);
+        vertices[v2].push_back(i);
     }
     int K;
     cin >> K;
     for (int i = 0; i < K; ++i) {
-        for (int j = 0; j < M; ++j) {
-            edge.insert(j);
-        }
+        set<int> edge;
         int Nv;
         cin >> Nv;
         for (int j = 0; j < Nv; ++j) {
             int v;
             scanf("%d",&v);
+            //往空集插入所有覆盖到的边
             for (auto it = vertices[v].begin(); it != vertices[v].end(); ++it) {
-                edge.erase(*it);
+                edge.insert(*it);
             }
-            if(edge.empty())
-                break;
         }
-        if(edge.empty()){
+        //边集合大小不等于边条数即为未完全覆盖
+        if(edge.size() == M){
             cout << "Yes" << endl;
         } else{
             cout << "No" << endl;
         }
     }
-
     return 0;
 }
