@@ -7,6 +7,10 @@ using namespace std;
 
 //PAT Advanced Level 1110 Complete Binary Tree
 
+/*
+ * 层序遍历
+ */
+
 struct node{
     int left,right,data;
 };
@@ -17,14 +21,15 @@ int main() {
     set<int> findRoot;
     vector<node> BT(N);
     for (int i = 0; i < N; ++i) {
-        char a,b;
+        //之前犯错用char接收，这就无法处理十位数了
+        string a,b;
         cin >> a >> b;
-        if(a != '-')
-            BT[i].left = a - '0';
+        if(a != "-")
+            BT[i].left = strtol(a.c_str(),nullptr,10);
         else
             BT[i].left = -1;
-        if(b != '-')
-            BT[i].right = b - '0';
+        if(b != "-")
+            BT[i].right = strtol(b.c_str(),nullptr,10);
         else
             BT[i].right = -1;
         BT[i].data = i;
