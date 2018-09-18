@@ -5,7 +5,7 @@ using namespace std;
 // PAT Advanced Level 1140 Look-and-say Sequence
 
 /*
- * 这题的关键在于是第i+1个字符串是对第i给字符串的描述，亦即将i字符串中每p个连续D记为Dp
+ * 这题的关键在于是第i+1个字符串是对第i个字符串的描述，亦即将i字符串中每p个连续D记为Dp
  */
 
 int main() {
