@@ -1,14 +1,16 @@
 class Solution {
 public:
     int lengthOfLongestSubstring(string s) {
-        int maxLen = 0,headPos = -1;
-        map<char,int> dict;
+        int maxLen = 0;
+        string thisStr;
         for(int i = 0;i < s.length();i++){
-            if(dict.find(s[i]) != dict.end() && dict[s[i]] > headPos){
-                headPos = dict[s[i]];
+            int pos = thisStr.find_first_of(s[i]);
+            if(pos != string::npos){
+                thisStr = thisStr.substr(pos+1,string::npos);
             }
-            dict[s[i]] = i;
-            maxLen = max(maxLen,i - headPos);
+            thisStr += s[i];
+            if(thisStr.length() > maxLen)
+                maxLen = thisStr.length();
         }
         return maxLen;
     }
