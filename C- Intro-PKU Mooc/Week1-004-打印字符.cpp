@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstdio>
 #include <vector>
 #include <algorithm>
@@ -6,7 +6,7 @@
 using namespace std;
 
 /**
- *  PKU 程序设计与算法慕课（三） C++面向对象 第一周004
+ *  PKU 程序设计与算法慕课（一） C++面向对象 第一周004
  *  004:打印字符
  *  描述
  *  输入一个ASCII码，输出对应的字符。

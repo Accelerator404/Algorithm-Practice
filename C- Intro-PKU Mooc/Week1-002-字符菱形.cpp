@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstdio>
 #include <vector>
 #include <algorithm>
@@ -6,7 +6,7 @@
 using namespace std;
 
 /**
- *  PKU 程序设计与算法慕课（三） C++面向对象 第一周002
+ *  PKU 程序设计与算法慕课（一） C++面向对象 第一周002
  *  002:字符菱形
  *  描述
  *  给定一个字符，用它构造一个对角线长5个字符，倾斜放置的菱形。

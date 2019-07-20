@@ -1,10 +1,10 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstdio>
 
 using namespace std;
 
 /**
- *  PKU 程序设计与算法慕课（三） C++面向对象 第一周001
+ *  PKU 程序设计与算法慕课（一） C++面向对象 第一周001
  *  001:输出第二个整数
  *  描述
  *  输入三个整数，把第二个输入的整数输出。

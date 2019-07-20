@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstdio>
 #include <vector>
 #include <algorithm>
@@ -6,7 +6,7 @@
 using namespace std;
 
 /**
- *  PKU 程序设计与算法慕课（三） C++面向对象 第一周005
+ *  PKU 程序设计与算法慕课（一） C++面向对象 第一周005
  *  005:整型数据类型存储空间大小
  *  描述
  *  分别定义int，short类型的变量各一个，并依次输出它们的存储空间大小（单位：字节）。
