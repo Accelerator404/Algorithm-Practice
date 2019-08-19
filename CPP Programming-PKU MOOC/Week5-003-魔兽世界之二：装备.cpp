@@ -159,6 +159,7 @@ public:
         } else
             return "";
     }
+    virtual string getSpecialStatus() = 0;
 };
 class dragon: public unit{
 private:
