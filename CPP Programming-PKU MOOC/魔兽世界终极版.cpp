@@ -1,6 +1,5 @@
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 #include <map>
 #include <cstdio>
 #include <vector>
@@ -13,8 +12,63 @@ using namespace std;
  */
 class unit;
 map<string,int> maxStrength;
-// 司令部的定义
-class hq{
+// 司令部与城市的定义
+class city{
+protected:
+    bool isHQ;
+    unsigned No;
+    unit * warriorRed;
+    unit * warriorBlue;
+    city * nextCity;
+    city * prevCity;
+public:
+    city(){}
+    city(bool HQ,int NoOfCity){
+        HQ = isHQ;
+        No = NoOfCity;
+    }
+    city(bool HQ,bool isRed,int N){
+        if(HQ&&isRed){
+            isHQ = true;
+            No = 0;
+        }
+        else if(HQ && isRed == false){
+            isHQ = true;
+            No = N + 1;
+        }
+        else{
+            isHQ = false;
+        }
+    }
+    void linkCity(city * prev,city * next){
+        nextCity = next;
+        prevCity = prev;
+    }
+    void blueUnitMoveForward(){
+        // 为了避免指针位被占用，从city0~cityN+1的顺序调用此函数
+        if(warriorBlue && prevCity){
+            prevCity->warriorBlue = warriorBlue;
+            warriorBlue = nullptr;
+        }
+    }
+    void redUnitMoveForward(){
+        // 同理，从cityN+1~city0调用此函数
+        if(warriorRed){
+            nextCity->warriorRed = warriorRed;
+            warriorRed = nullptr;
+        }
+    }
+    void battle(){
+        if(warriorRed && warriorBlue){
+            bool isOddNoCity = (No%2 == 1);
+            if(isOddNoCity){
+
+            }
+
+        }
+    }
+};
+class hq:public city{
 private:
     int HP;
     unsigned iter,typecode;     //时间迭代器及单位类型迭代器
@@ -22,19 +76,27 @@ private:
     string Faction;             //司令部所属派系的名字
     vector<string> trainOrder;  //本派系的训练顺序
     map<string,int> unitCount;  //本司令部已训练单位的数目
-    vector<unit*> unitList;     //本司令部训练出的单位的指针列表
     void testMyHP(){
         //测试用函数
         cout << " Now " << Faction << " has " << HP << " HP." << endl;
     }
 public:
     hq(int M,bool isRed);       //构造函数(初始生命值,是否红方)
-    unit * train();             //训练一个新单位，加入unitList，打印训练信息，并返回其指针
+    unit * train();             //训练一个新单位，加入到单位槽，打印训练信息，并返回其指针
     string getFaction();        //返回本司令部的派系
+    bool factionIsRed(){
+        if(Faction == "red")
+            return true;
+        else
+            return false;
+    }
     int getNo();                //返回下一个训练中单位的编号(iter+1)
     int getUnitCost(int typecode);//按训练顺序和单位迭代器返回单位的训练消耗
     int getHP(){
         return HP;
+    }
+    void checkWhetherEnemyInHQ(){   //单位前进完成后调用此函数检查，如果敌人进入司令部则结束游戏
+
     }
 };
 // 定义基类
@@ -83,7 +145,8 @@ dummyWeapon emptySlot;
 class unit{             //所有单位的基类
 protected:
     string Faction;             //单位的派系
-    int strength;               //单位的血量
+    int elements;               //单位的血量
+    int force;                  //单位的攻击力
     int No;                     //单位的序号
     string type;                //单位的类型
     int weaponCount;            //武器数目
@@ -101,7 +164,7 @@ public:
         statusChanged = true;
     }
     int getStrength(){
-        return strength;
+        return elements;
     }
     int getUnitNo(){
         return No;
@@ -139,6 +202,12 @@ public:
     }
     void sortWeapons(){
         //todo
+    }
+    void resetStatChangedFlag(){
+        statusChanged = false;
+    }
+    bool StatChanged(){
+        return statusChanged;
     }
     vector<weapon *> giveWeapon(int availableEmptySlot){      // 被wolf抢武器
         vector<weapon*> weapons;
@@ -180,11 +249,44 @@ public:
             statusChanged = true;
         return weapons;
     }
-    virtual string getSpecialStatus() = 0;
-    virtual void attack(unit * targetUnit) = 0;
-    virtual void hurt(int damage) = 0;
-    virtual void fightBack(unit * targetUnit) = 0;
-    virtual void moveForward() = 0;
+    virtual string getSpecialStatus(){
+        return getWeaponInfo();
+    };
+    virtual void attack(unit * targetUnit){
+        //检查双方的死活
+        if(!alive())
+            return;
+        //没武器时站立挨打
+        if(weaponCount == 0){
+            return;
+        }
+        //选择武器
+        int weaponNo = 0;
+        while(weaponSlot[weaponNo] == &emptySlot && weaponNo < 10){
+            weaponNo++;
+        }
+        targetUnit->hurt(weaponSlot[weaponNo]->atk(this));    //用武器攻击
+        hurt(weaponSlot[weaponNo]->sideEffect(this));         //炸弹伤害波及自身
+        if(weaponSlot[weaponNo]->getType() == 1 || weaponSlot[weaponNo]->getType() == 2)
+            statusChanged = true;   //武器状态改变
+        if(weapon::destroyWeapon(weaponSlot[weaponNo])){        //武器减耐久
+            weapon * w = weaponSlot[weaponNo];
+            weaponSlot[weaponNo] = &emptySlot;
+            delete w;
+            weaponCount--;
+        }
+    };
+    virtual void hurt(int damage){
+        elements -= damage;
+        if(elements <= 0)
+            isAlive = false;
+        if(damage > 0)
+            statusChanged = true;
+    };
+    virtual void moveForward(){
+        // 前进时重置状态
+        resetStatChangedFlag();
+    };
 };
 // 派生具体武器
 class sword:public weapon{
@@ -236,86 +338,36 @@ class dragon: public unit{
 public:
     dragon(hq* masterHQ):unit(masterHQ){    //调用基类的构造函数
         type = "dragon";
-        strength = maxStrength[type];
+        elements = maxStrength[type];
         weaponCount = 1;
         weaponSlot[0] = genWeaponByNo(No);
     }
-    string getSpecialStatus(){
-        string output = getWeaponInfo();
-        return output;
-    }
     string yell(){
         //todo
-    }
-    virtual void attack(unit * targetUnit){
-        //检查双方的死活
-        if(!alive())
-            return;
-        if(!targetUnit->alive()){
-            cout << yell() << endl;
-            return;
-        }
-        //没武器时站立挨打
-        if(weaponCount == 0){
-            fightBack(targetUnit);
-            return;
-        }
-        //选择武器
-        int weaponNo = 0;
-        while(weaponSlot[weaponNo] == &emptySlot && weaponNo < 10){
-            weaponNo++;
-        }
-        targetUnit->hurt(weaponSlot[weaponNo]->atk(this));    //用武器攻击
-        hurt(weaponSlot[weaponNo]->sideEffect(this));         //炸弹伤害波及自身
-        if(weapon::destroyWeapon(weaponSlot[weaponNo])){        //武器减耐久
-            weapon * w = weaponSlot[weaponNo];
-            weaponSlot[weaponNo] = &emptySlot;
-            delete w;
-            weaponCount--;
-        }
-        fightBack(targetUnit);  //进入对方攻击的回合
-    };
-    virtual void hurt(int damage){
-        strength -= damage;
-        if(strength <= 0)
-            isAlive = false;
-    };
-    virtual void fightBack(unit * targetUnit){
-        if(targetUnit->alive())
-            targetUnit->attack(this);
-    };
-    virtual void moveForward(){
-        // 前进时重置状态
-        statusChanged = false;
     }
 };
 class ninja: public unit{
 public:
     ninja(hq* masterHQ):unit(masterHQ){
         type = "ninja";
-        strength = maxStrength[type];
+        elements = maxStrength[type];
         weaponCount = 2;
         weaponSlot[0] = genWeaponByNo(No);
         weaponSlot[1] = genWeaponByNo(No+1);
-    }
-    string getSpecialStatus(){
-        return getWeaponInfo();
     }
 };
 class iceman: public unit{
 public:
     iceman(hq* masterHQ):unit(masterHQ){
         type = "iceman";
-        strength = maxStrength[type];
+        elements = maxStrength[type];
         weaponCount = 1;
         weaponSlot[0] = genWeaponByNo(No);
     }
-    string getSpecialStatus(){
-        return getWeaponInfo();
-    }
-
     virtual void moveForward(){
         //掉血
+        hurt(elements /10);
+        resetStatChangedFlag();
     }
 };
 class lion: public unit{
@@ -324,8 +376,8 @@ private:
 public:
     lion(hq* masterHQ):unit(masterHQ){
         type = "lion";
-        strength = maxStrength[type];
-        loyalty = masterHQ->getHP() - strength;
+        elements = maxStrength[type];
+        loyalty = masterHQ->getHP() - elements;
         weaponCount = 1;
         weaponSlot[0] = genWeaponByNo(No);
     }
@@ -342,11 +394,8 @@ private:
 public:
     wolf(hq* masterHQ):unit(masterHQ){
         type = "wolf";
-        strength = maxStrength[type];
+        elements = maxStrength[type];
         seized = false;
-    }
-    virtual string getSpecialStatus(){
-        return "";
     }
     void seizeWeapon(unit * targetUnit){
         //不抢武器的情况
@@ -370,8 +419,8 @@ public:
         seized = false;
     }
 };
-
-hq::hq(int M,bool isRed){
+// 司令部的类函数
+hq::hq(int M,bool isRed):city(true,isRed){
     HP = M;
     iter = 0;           //初始化时迭代器置零
     typecode = 0;
@@ -444,10 +493,13 @@ unit * hq::train(){
     }
     HP -= newUnit->getStrength();   //扣除新训练单位的消耗
     unitCount[myType]++;            //新单位计入司令部
-    unitList.push_back(newUnit);    //新单位归入司令部待命单位的序列
+    if(factionIsRed())                 //新单位归入司令部待命单位的序列
+        warriorRed = newUnit;
+    else
+        warriorBlue = newUnit;
     printf("%03d ",iter);           //打印训练成功信息
     cout << Faction << ' ' << myType << ' ' << newUnit->getUnitNo()
-         << " born with strength " << newUnit->getStrength() << ','
+         << " born with elements " << newUnit->getStrength() << ','
          << unitCount[myType] << ' ' << myType << " in " << Faction << " headquarter" << endl;
     // 输出特殊属性
     if(SpecialStat.length() > 1)cout << SpecialStat << endl;
@@ -467,9 +519,9 @@ int main(){
     int caseNum,u = 0;
     cin >> caseNum;
     while(++u <= caseNum){
-        int M;
+        int M,N,K,T;
         vector<int> primaryHP(5);
-        cin >> M;
+        cin >> M >> N >> K >> T;
         for (int i = 0; i < 5; ++i) {
             cin >> primaryHP[i];
         }
