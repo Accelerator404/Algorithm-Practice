@@ -14,8 +14,6 @@ using namespace std;
  * destructor B
  * destructor A
  */
-#include <iostream>
-using namespace std;
 class A
 {
 public:
