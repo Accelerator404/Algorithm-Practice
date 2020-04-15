@@ -19,19 +19,21 @@ bool inCarpetArea(unsigned int x, unsigned int y, carpet c) {
 }
 
 int main() {
-    unsigned int n, x, y;
+    int n, x, y;
     int top;
     cin >> n;
     vector<carpet> info(n);
-    for (unsigned int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) {
         info[i].i = i + 1;    // 地毯编号
-        cin >> info[i].a >> info[i].b >> info[i].g >> info[i].k;
+        scanf("%d%d%d%d", &info[i].a, &info[i].b, &info[i].g, &info[i].k);
     }
     cin >> x >> y;
     top = -1;
-    for (unsigned int j = 0; j < n; ++j) {
+    // 倒序验证
+    for (int j = n - 1; j >= 0; --j) {
         if (inCarpetArea(x, y, info[j])) {
             top = info[j].i;
+            break;
         }
     }
     cout << top;
