@@ -3,7 +3,7 @@
 
 using namespace std;
 
-//PAT Advanced No.1004 “成绩排名”
+//PAT Basic No.1004 “成绩排名”
 
 int main(){
     map<int,string> mp1,mp2;
